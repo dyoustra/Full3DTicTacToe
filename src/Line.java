@@ -200,4 +200,12 @@ public class Line {
         }
         return null;
     }
+
+    // added
+    public static boolean isWinning(long positions) {
+        for (Line line : lines) {
+            if (Bit.countOnes(line.positions & positions) == 4) return true;
+        }
+        return false;
+    }
 }

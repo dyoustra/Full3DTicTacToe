@@ -3,7 +3,6 @@ import java.util.Iterator;
 public class State implements Game.State<Action> {
 
     private final Board board;
-    // change to boolean if needed for time/mem
     private final Player turn;
 
     public State(Board board, Player turn) {
@@ -48,10 +47,6 @@ public class State implements Game.State<Action> {
     public State next(int row, int col, int plane, Player player) {
         return this.next(new Action(Coordinate.valueOf(row, col, plane), player));
     }
-
-//    public Iterator<Coordinate> emptySquareIterator() {
-//        return new Board.EmptySquareIterator();
-//    }
 
     @Override
     public Iterable<Action> moves() {

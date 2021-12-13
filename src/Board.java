@@ -10,11 +10,13 @@ public class Board {
     public static final int N = 4;
     public static final int NCubed = N * N * N;
 
-    public static final int win = Integer.MAX_VALUE;
-    public static final int loss = Integer.MIN_VALUE;
+    public static final int loss = Integer.MAX_VALUE;
+    public static final int win = Integer.MIN_VALUE;
 
     // higher value = more separation between 1 in a row - 2 in a row - 3 in a row
-    public static final int evaluationBase = 8;
+    // change individually to debug
+    public static final int evaluationBaseX = 8;
+    public static final int evaluationBaseO = 8;
 
     private long x; // Boolean vector of positions containing X's
     private long o; // Boolean vector of positions containing O's
@@ -115,8 +117,8 @@ public class Board {
 
     public boolean isTerminal() {
         if (this.numberEmptySquares() == 0) return true;
-        if (Line.find(x) != null) return true;
-        if (Line.find(o) != null) return true;
+        if (Line.isWinning(x)) return true;
+        if (Line.isWinning(o)) return true;
         return false;
     }
 
@@ -129,29 +131,42 @@ public class Board {
     public int evaluate() {
         int evaluation = 0;
         for (Line line : Line.lines) {
-            if (line.intersects(this.x) && !line.intersects(this.o)) {
-                Iterator<Integer> ones = Bit.ones(line.positions()).iterator();
-                byte xOnLine = 0; // how many x are on the open line
-                while (ones.hasNext()) {
-                    if (this.get(ones.next()) == Player.X) xOnLine++;
-                }
+            boolean intersectsX = line.intersects(this.x);
+            boolean intersectsO = line.intersects(this.o);
+            if (intersectsX && !intersectsO) {
+                int xOnLine = Bit.countOnes(line.positions() & this.x); // how many x are on the open line
                 if (xOnLine == 4) return (Player.ME == Player.X) ? win : loss;
-                int value = (int) Math.pow(evaluationBase, xOnLine);
+                int value = evaluationBaseX << xOnLine; // shift the binary over to the left by the num of x on the line
                 evaluation += (Player.ME == Player.X) ? value : -value;
-            } else if (line.intersects(this.o) && !line.intersects(this.x)) {
-                Iterator<Integer> ones = Bit.ones(line.positions()).iterator();
-                byte oOnLine = 0; // how many o are on the open line
-                while (ones.hasNext()) {
-                    if (this.get(ones.next()) == Player.O) oOnLine++;
-                }
+            } else if (intersectsO && !intersectsX) {
+                int oOnLine = Bit.countOnes(line.positions() & this.o); // how many o are on the open line
                 if (oOnLine == 4) return (Player.ME == Player.O) ? win : loss;
-                int value = (int) Math.pow(evaluationBase, oOnLine);
+                int value = evaluationBaseO << oOnLine; // shift the binary over to the left by the num of o on the line
                 evaluation += (Player.ME == Player.O) ? value : -value;
             }
         }
         return evaluation;
     }
 
+//    public int evaluate() {
+//        int evaluation = 0;
+//        for (Line line : Line.lines) {
+//            boolean intersectsX = line.intersects(this.x);
+//            boolean intersectsO = line.intersects(this.o);
+//            if (intersectsX && !intersectsO) {
+//                int xOnLine = Bit.countOnes(line.positions() & this.x); // how many x are on the open line
+//                if (xOnLine == 4) return (Player.ME == Player.X) ? win : loss;
+//                int value = (int) Math.pow(evaluationBaseME, xOnLine);
+//                evaluation += (Player.ME == Player.X) ? value : -value;
+//            } else if (intersectsO && !intersectsX) {
+//                int oOnLine = Bit.countOnes(line.positions() & this.o); // how many o are on the open line
+//                if (oOnLine == 4) return (Player.ME == Player.O) ? win : loss;
+//                int value = (int) Math.pow(evaluationBaseYOU, oOnLine);
+//                evaluation += (Player.ME == Player.O) ? value : -value;
+//            }
+//        }
+//        return evaluation;
+//    }
 
     // Set value of a square on the board.
 

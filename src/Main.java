@@ -8,7 +8,7 @@ public class Main {
         boolean evaluation = false;
         // default board is empty
         Board board = new Board("");
-        AlphaBetaMinimax<Action> minimax = new AlphaBetaMinimax<>(4);
+        AlphaBetaMinimax<Action> minimax = new AlphaBetaMinimax<>(5);
 
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -31,13 +31,16 @@ public class Main {
                     minimax.setPlies(Integer.parseInt(args[++i]));
                     break;
 
-                case "-evaluation":
+                case "-evaluate":
                     evaluation = true;
                     break;
 
                 case "-export":
                     export = true;
                     break;
+
+                case "-singlethread":
+                    minimax.setMultithread(false);
 
                 default:
                     board = new Board(args[i]);
@@ -50,7 +53,7 @@ public class Main {
         if (first) current = new State(board, Player.ME);
         else current = new State(board, Player.YOU);
         current.print();
-
+        if (evaluation) System.out.println("Current Board Evaluation: " + current.evaluate());
         while (!current.isTerminal()) {
             Statistics.reset();
             System.out.println("Turn: " + current.turn());
