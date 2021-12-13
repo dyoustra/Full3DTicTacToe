@@ -21,7 +21,10 @@ public class Bit {
     public static int position(long mask) {
         // Position of the leading one.
         // Inverse of the mask function.
-        return 63 - countLeadingZeros(mask);
+        // ADDED: This is probably better. Just 1 assembly function instead of Paige's template
+        return 63 - Long.numberOfLeadingZeros(mask);
+        // you can always rollback on the template under here though
+//         return 63 - countLeadingZeros(mask);
     }
 
     public static int countOnes(long x) {

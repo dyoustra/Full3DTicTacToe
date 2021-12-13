@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         boolean first = true;
         boolean export = false;
-        boolean evaluation = false;
+        boolean statistics = false;
         // default board is empty
         Board board = new Board("");
         AlphaBetaMinimax<Action> minimax = new AlphaBetaMinimax<>(5);
@@ -31,8 +31,8 @@ public class Main {
                     minimax.setPlies(Integer.parseInt(args[++i]));
                     break;
 
-                case "-evaluate":
-                    evaluation = true;
+                case "-statistics":
+                    statistics = true;
                     break;
 
                 case "-export":
@@ -53,20 +53,25 @@ public class Main {
         if (first) current = new State(board, Player.ME);
         else current = new State(board, Player.YOU);
         current.print();
-        if (evaluation) System.out.println("Current Board Evaluation: " + current.evaluate());
+        if (statistics) System.out.println("Current Board Evaluation: " + current.evaluate());
         while (!current.isTerminal()) {
             Statistics.reset();
             System.out.println("Turn: " + current.turn());
             if (current.turn() == Player.ME) {
+                final long time = System.nanoTime();
                 current = current.next(minimax.alphaBetaMinimax(current));
-                System.out.println("States: " + Statistics.states);
+                final long finish = System.nanoTime() - time;
+                if (statistics) {
+                    System.out.println("Seconds: " + finish / 1000000000.0);
+                    System.out.println("States: " + Statistics.states);
+                }
             }
             else {
                 current = playerInput(scanner, current);
             }
             current.print();
             if (export) System.out.println(current.board());
-            if (evaluation) System.out.println("Current Board Evaluation: " + current.evaluate());
+            if (statistics) System.out.println("Current Board Evaluation: " + current.evaluate());
         }
 
         switch (current.evaluate()) {
