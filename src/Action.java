@@ -7,9 +7,4 @@ public class Action {
         this.move = move;
         this.player = player;
     }
-
-//    public Action(Coordinate move, boolean xMove) {
-//        this.move = move;
-//        this.player = (xMove) ? Player.X : Player.O;
-//    }
 }

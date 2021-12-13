@@ -50,12 +50,7 @@ public class State implements Game.State<Action> {
 
     @Override
     public Iterable<Action> moves() {
-        return new Iterable<Action>() {
-            @Override
-            public Iterator<Action> iterator() {
-                return new MoveIterator();
-            }
-        };
+        return MoveIterator::new;
     }
 
     @Override
@@ -65,7 +60,7 @@ public class State implements Game.State<Action> {
 
     private class MoveIterator implements Iterator<Action> {
 
-        private Iterator<Coordinate> iterator;
+        private final Iterator<Coordinate> iterator;
 
         public MoveIterator() {
             this.iterator = State.this.board.emptySquareIterator();

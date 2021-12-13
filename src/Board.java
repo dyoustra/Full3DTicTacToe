@@ -230,7 +230,7 @@ public class Board {
     @Override
     public String toString() {
         String result = "";
-        String separator = "";
+        String separator;
         for (int position = 0; position < 64; position++) {
             if (position % 16 == 0) {
                 separator = " | ";
@@ -293,7 +293,7 @@ public class Board {
 
     private class EmptySquareIterator implements Iterator<Coordinate> {
 
-        private Iterator<Integer> iterator;
+        private final Iterator<Integer> iterator;
 
         public EmptySquareIterator() {
             this.iterator = Bit.iterator(~(Board.this.x | Board.this.o));
@@ -314,12 +314,7 @@ public class Board {
     }
 
     public Iterable<Coordinate> emptySquares() {
-        return new Iterable<Coordinate>() {
-            @Override
-            public Iterator<Coordinate> iterator() {
-                return new EmptySquareIterator();
-            }
-        };
+        return EmptySquareIterator::new;
     }
 
 }

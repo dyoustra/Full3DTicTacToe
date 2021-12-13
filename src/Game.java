@@ -5,11 +5,11 @@
 
 public class Game {
 
-    public static interface State<Action> {
-        public int evaluate();
-        public boolean isTerminal();
-        public State<Action> next(Action action);
-        public Iterable<Action> moves();
-        public int numEmptySquares();
+    public interface State<Action> {
+        int evaluate();
+        boolean isTerminal();
+        State<Action> next(Action action);
+        Iterable<Action> moves();
+        int numEmptySquares();
     }
 }
