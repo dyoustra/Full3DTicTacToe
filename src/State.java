@@ -1,0 +1,83 @@
+import java.util.Iterator;
+
+public class State implements Game.State<Action> {
+
+    private final Board board;
+    // change to boolean if needed for time/mem
+    private final Player turn;
+
+    public State(Board board, Player turn) {
+        this.board = board;
+        this.turn = turn;
+        Statistics.states++;
+    }
+
+    public Player turn() {
+        return this.turn;
+    }
+
+    public void print() {
+        this.board.print();
+        System.out.println("----------------------------");
+    }
+
+    public Board board() {
+        return this.board;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.board.hashCode();
+    }
+
+    @Override
+    public int evaluate() {
+        return this.board.evaluate();
+    }
+
+    @Override
+    public boolean isTerminal() {
+        return this.board.isTerminal();
+    }
+
+    @Override
+    public State next(Action action) {
+        return new State(this.board.next(action.move, action.player), this.turn.other());
+    }
+
+    public State next(int row, int col, int plane, Player player) {
+        return this.next(new Action(Coordinate.valueOf(row, col, plane), player));
+    }
+
+//    public Iterator<Coordinate> emptySquareIterator() {
+//        return new Board.EmptySquareIterator();
+//    }
+
+    @Override
+    public Iterable<Action> moves() {
+        return new Iterable<Action>() {
+            @Override
+            public Iterator<Action> iterator() {
+                return new MoveIterator();
+            }
+        };
+    }
+
+    private class MoveIterator implements Iterator<Action> {
+
+        private Iterator<Coordinate> iterator;
+
+        public MoveIterator() {
+            this.iterator = State.this.board.emptySquareIterator();
+        }
+
+        public boolean hasNext() {
+            return this.iterator.hasNext();
+        }
+
+        public Action next() {
+            return new Action(this.iterator.next(), State.this.turn);
+        }
+    }
+
+}
