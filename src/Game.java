@@ -10,5 +10,6 @@ public class Game {
         public boolean isTerminal();
         public State<Action> next(Action action);
         public Iterable<Action> moves();
+        public int numEmptySquares();
     }
 }

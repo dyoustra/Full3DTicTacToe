@@ -63,6 +63,11 @@ public class State implements Game.State<Action> {
         };
     }
 
+    @Override
+    public int numEmptySquares() {
+        return this.board.numberEmptySquares();
+    }
+
     private class MoveIterator implements Iterator<Action> {
 
         private Iterator<Coordinate> iterator;

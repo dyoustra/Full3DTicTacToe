@@ -5,9 +5,10 @@
 
 import javafx.concurrent.Task;
 
-import java.util.Comparator;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class AlphaBetaMinimax<Action> {
@@ -38,20 +39,40 @@ public class AlphaBetaMinimax<Action> {
             return value - o.value;
 //            return Integer.compare(value, o.value);
         }
+
+        @Override
+        public String toString() {
+            return "Intermediate{" +
+                    "action=" + action +
+                    ", value=" + value +
+                    '}';
+        }
     }
 
     public Action alphaBetaMinimax(Game.State<Action> state) {
-        int max = Integer.MIN_VALUE;
-        Action maxAction = null;
-        final Intermediate winner = StreamSupport.stream(state.moves().spliterator(), true).reduce(new Intermediate(null, Integer.MIN_VALUE), (Intermediate lastResult, Action nextAction) -> {
-            int value = this.minValue(state.next(nextAction), Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
-            if (value > lastResult.value) {
-                return new Intermediate(nextAction, value);
-            } else {
-                return lastResult;
-            }
-            // Max
-        }, (a, b) -> a.compareTo(b) > 0 ? a : b);
+//        int max = Integer.MIN_VALUE;
+//        Action maxAction = null;
+//        final Intermediate winner = StreamSupport.stream(state.moves().spliterator(), true).reduce(new Intermediate(null, Integer.MIN_VALUE), (Intermediate lastResult, Action nextAction) -> {
+//            int value = this.minValue(state.next(nextAction), Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+//            if (value > lastResult.value) {
+//                return new Intermediate(nextAction, value);
+//            } else {
+//                return lastResult;
+//            }
+//            // Max
+//        }, (a, b) -> a.compareTo(b) > 0 ? a : b);
+//        assert(winner.action != null);
+//        final List<Intermediate> thing = StreamSupport.stream(state.moves().spliterator(), true)
+//                .map(a -> new Intermediate(a, this.minValue(state.next(a), Integer.MIN_VALUE, Integer.MAX_VALUE, 0))).collect(Collectors.toList());
+//        System.out.println(Arrays.toString(thing.toArray()));
+
+//        final Optional<Intermediate> winnerMaybe = StreamSupport.stream(state.moves().spliterator(), true)
+//                .map(a -> new Intermediate(a, this.minValue(state.next(a), Integer.MIN_VALUE, Integer.MAX_VALUE, 0)))
+//                .max(Intermediate::compareTo);
+        final Optional<Intermediate> winnerMaybe = StreamSupport.stream(Spliterators.spliterator(state.moves().iterator(), state.numEmptySquares(), 0), true)
+                .map(a -> new Intermediate(a, this.minValue(state.next(a), Integer.MIN_VALUE, Integer.MAX_VALUE, 0)))
+                .max(Intermediate::compareTo);
+        final Intermediate winner = winnerMaybe.get();
         assert(winner.action != null);
         return winner.action;
 //        for (Action action : state.moves()) {
